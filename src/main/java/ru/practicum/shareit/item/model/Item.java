@@ -1,7 +1,18 @@
 package ru.practicum.shareit.item.model;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-/**
- * TODO Sprint add-controllers.
- */
+@Data
+@EqualsAndHashCode(of = "id")
+@SuperBuilder
+@NoArgsConstructor
 public class Item {
+    private int id;
+    private String name;
+    private String description;
+    private boolean isAvailable;
+    private int ownerId;
+    private int requestId;
 }
