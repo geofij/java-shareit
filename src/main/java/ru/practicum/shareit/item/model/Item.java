@@ -9,10 +9,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class Item {
-    private int id;
+    private Long id;
     private String name;
     private String description;
-    private boolean isAvailable;
-    private int ownerId;
-    private int requestId;
+    private Boolean isAvailable;
+    private Long ownerId;
+    private Long requestId;
 }

@@ -1,29 +1,27 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.shareit.item.model.Item;
 
-@Data
-@EqualsAndHashCode(of = "id")
+import javax.validation.constraints.NotNull;
+
+@Getter
 @SuperBuilder
 @NoArgsConstructor
 public class ItemDto {
-    private int id;
-    private String name;
-    private String description;
-    private boolean isAvailable;
-    private int ownerId;
-    private int requestId;
+    private Long id;
 
-    public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
-                .name(item.getName())
-                .description(item.getDescription())
-                .isAvailable(item.isAvailable())
-                .requestId(item.getRequestId())
-                .build();
-    }
+    @NotNull
+    private String name;
+
+    @NotNull
+    private String description;
+
+    @NotNull
+    private Boolean isAvailable;
+
+    @NotNull
+    private Long ownerId;
+    private Long requestId;
 }

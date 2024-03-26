@@ -1,7 +1,6 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.request.model;
 
 import java.time.LocalDateTime;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,11 +10,9 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor
-public class Booking {
-    private int id;
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private int itemId;
-    private int bookerId;
-    private BookingStatus status;
+public class ItemRequest {
+    private Long id;
+    private String description;
+    private Long requesterId;
+    private LocalDateTime created;
 }

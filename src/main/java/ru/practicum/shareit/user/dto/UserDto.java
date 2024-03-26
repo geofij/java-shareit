@@ -1,24 +1,22 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.shareit.user.User;
 
-@Data
-@EqualsAndHashCode(of = "id")
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+
+@Getter
 @SuperBuilder
 @NoArgsConstructor
 public class UserDto {
-    private int id;
-    private String name;
-    private String email;
+    private Long id;
 
-    public static UserDto toUserDto(User user) {
-        return UserDto.builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .build();
-    }
+    @NotNull
+    private String name;
+
+    @Email
+    @NotNull
+    private String email;
 }

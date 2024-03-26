@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,9 +10,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class User {
-    private int id;
+    private Long id;
     private String name;
     private String email;
-
 
 }

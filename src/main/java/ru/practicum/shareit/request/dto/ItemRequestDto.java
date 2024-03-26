@@ -2,27 +2,24 @@ package ru.practicum.shareit.request.dto;
 
 import java.time.LocalDateTime;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.shareit.request.ItemRequest;
 
-@Data
-@EqualsAndHashCode(of = "id")
+import javax.validation.constraints.NotNull;
+
+@Getter
 @SuperBuilder
 @NoArgsConstructor
 public class ItemRequestDto {
-    private int id;
-    private String description;
-    private int requesterId;
-    private LocalDateTime created;
+    private Long id;
 
-    public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
-        return ItemRequestDto.builder()
-                .description(itemRequest.getDescription())
-                .requesterId(itemRequest.getRequesterId())
-                .created(itemRequest.getCreated())
-                .build();
-    }
+    @NotNull
+    private String description;
+
+    @NotNull
+    private Long requesterId;
+
+    @NotNull
+    private LocalDateTime created;
 }
