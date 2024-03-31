@@ -12,4 +12,6 @@ import ru.practicum.shareit.booking.service.BookingService;
 public class BookingController {
     private final BookingDto bookingDto;
     private final BookingService service;
+
+
 }
