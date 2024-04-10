@@ -5,16 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class UserDto {
-    @NotNull
+public class UserUpdateDto {
     private String name;
 
     @Email
-    @NotNull
     private String email;
 }

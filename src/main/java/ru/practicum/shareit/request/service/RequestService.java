@@ -5,9 +5,9 @@ import ru.practicum.shareit.request.model.ItemRequest;
 public interface RequestService {
     ItemRequest get(Long id);
 
-    ItemRequest add(ItemRequest user);
+    ItemRequest add(ItemRequest request);
 
-    ItemRequest update(ItemRequest user);
+    ItemRequest update(ItemRequest request);
 
     void delete(Long id);
 }

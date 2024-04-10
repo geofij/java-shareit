@@ -7,9 +7,9 @@ import java.util.List;
 public interface ItemStorage {
     Item get(Long id);
 
-    Item add(Item user, Long ownerId);
+    Item add(Item user);
 
-    Item update(Item user, Long ownerId);
+    Item update(Item user);
 
     void delete(Long id);
 

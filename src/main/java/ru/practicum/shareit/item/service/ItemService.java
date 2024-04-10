@@ -7,9 +7,9 @@ import java.util.List;
 public interface ItemService {
     Item get(Long id);
 
-    Item add(Item user, Long ownerId);
+    Item add(Item item);
 
-    Item update(Item user, Long ownerId);
+    Item update(Item item);
 
     void delete(Long id);
 

@@ -14,19 +14,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemDto itemDto;
     private final ItemService service;
 
     @PostMapping
     public Item add(@Valid @RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") long ownerId) {
         Item newItem = ItemMapper.toItem(item);
-        return service.add(newItem, ownerId);
+        newItem.setOwnerId(ownerId);
+        return service.add(newItem);
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@Valid @RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") long ownerId) {
+    public Item update(@Valid @RequestBody ItemDto item,
+                       @RequestHeader("X-Sharer-User-Id") long ownerId,
+                       @PathVariable("id") long id) {
         Item newItem = ItemMapper.toItem(item);
-        return service.update(newItem, ownerId);
+        newItem.setOwnerId(ownerId);
+        newItem.setId(id);
+        return service.update(newItem);
     }
 
     @GetMapping("/{itemId}")
@@ -39,7 +43,7 @@ public class ItemController {
         return service.getAll();
     }
 
-    @GetMapping("/search?text={text}")
+    @GetMapping("/search")
     public List<Item> search(@RequestParam("text") String text) {
         return service.search(text);
     }

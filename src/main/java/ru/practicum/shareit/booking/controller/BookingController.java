@@ -10,8 +10,5 @@ import ru.practicum.shareit.booking.service.BookingService;
 @RestController
 @RequestMapping(path = "/bookings")
 public class BookingController {
-    private final BookingDto bookingDto;
-    private final BookingService service;
-
-
+    //private final BookingService service;
 }
