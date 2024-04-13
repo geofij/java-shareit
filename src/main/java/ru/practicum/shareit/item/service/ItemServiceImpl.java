@@ -57,7 +57,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    private void updateItemFromDto (Item itemDto, Item itemUpdate) {
+    private void updateItemFromDto(Item itemDto, Item itemUpdate) {
         if (itemDto.getName() != null) {
             itemUpdate.setName(itemDto.getName());
         }
