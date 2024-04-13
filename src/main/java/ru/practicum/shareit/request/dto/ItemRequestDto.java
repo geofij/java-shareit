@@ -12,8 +12,6 @@ import javax.validation.constraints.NotNull;
 @SuperBuilder
 @NoArgsConstructor
 public class ItemRequestDto {
-    private Long id;
-
     @NotNull
     private String description;
 

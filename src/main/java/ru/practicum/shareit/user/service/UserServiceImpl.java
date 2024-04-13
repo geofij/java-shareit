@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
     private final UserStorage storage;
 
     @Override
-    public User get(Long id) {
+    public User get(long id) {
         return storage.get(id);
     }
 
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         storage.delete(id);
     }
 

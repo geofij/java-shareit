@@ -5,13 +5,13 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 
 public interface UserStorage {
-    User get(Long id);
+    User get(long id);
 
     User add(User user);
 
     User update(User user);
 
-    void delete(Long id);
+    void delete(long id);
 
     List<User> getAll();
 }

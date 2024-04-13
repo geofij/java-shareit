@@ -32,7 +32,7 @@ public class UserController {
     public User update(@Valid @RequestBody UserUpdateDto user, @PathVariable("id") long id) {
         User newUser = UserMapper.toUser(user);
 
-        if (newUser.getEmail() != null && !validateSameEmail(newUser.getEmail(), id)) {
+        if (newUser.getEmail() != null && !isSameEmail(newUser.getEmail(), id)) {
             validateEmailNotUsed(user.getEmail());
         }
 
@@ -68,7 +68,7 @@ public class UserController {
         }
     }
 
-    private boolean validateSameEmail(String email, long id) {
+    private boolean isSameEmail(String email, long id) {
         return service.get(id).getEmail().equals(email);
     }
 }

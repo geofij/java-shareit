@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.List;
 
 @Repository
-public class ItemStorageImpl implements ItemStorage {
+public class ItemStorageInMemory implements ItemStorage {
     private final Map<Long, Item> storage = new HashMap<>();
     private long id;
 
     @Override
-    public Item get(Long id) {
+    public Item get(long id) {
         return storage.get(id);
     }
 
@@ -23,7 +23,7 @@ public class ItemStorageImpl implements ItemStorage {
         id++;
         item.setId(id);
         storage.put(item.getId(), item);
-        return get(item.getId());
+        return storage.get(item.getId());
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ItemStorageImpl implements ItemStorage {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         storage.remove(id);
     }
 

@@ -13,7 +13,7 @@ public interface ItemService {
 
     void delete(Long id);
 
-    List<Item> getAll();
+    List<Item> getAll(long ownerId);
 
     List<Item> search(String text);
 }

@@ -13,4 +13,18 @@ public class ErrorHandler {
     public ErrorResponse handleEmailUsedValidationException(EmailUsedValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleUserIsNotOwnerException(UserIsNotOwnerException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDataNotFoundException(final DataNotFoundException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
 }

@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @SuperBuilder
 @NoArgsConstructor
 public class BookingDto {
-    private Long id;
 
     @NotNull
     private LocalDateTime start;

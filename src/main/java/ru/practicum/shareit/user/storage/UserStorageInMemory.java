@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -15,7 +16,10 @@ public class UserStorageInMemory implements  UserStorage {
     private long id;
 
     @Override
-    public User get(Long id) {
+    public User get(long id) {
+        if (storage.get(id) == null) {
+            throw new DataNotFoundException("Пользователь с id " + id + " не найден.");
+        }
         return storage.get(id);
     }
 
@@ -34,7 +38,7 @@ public class UserStorageInMemory implements  UserStorage {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(long id) {
         storage.remove(id);
     }
 
