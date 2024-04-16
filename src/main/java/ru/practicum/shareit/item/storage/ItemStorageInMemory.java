@@ -14,12 +14,12 @@ public class ItemStorageInMemory implements ItemStorage {
     private long id;
 
     @Override
-    public Item get(long id) {
+    public Item getById(long id) {
         return storage.get(id);
     }
 
     @Override
-    public Item add(Item item) {
+    public Item save(Item item) {
         id++;
         item.setId(id);
         storage.put(item.getId(), item);
@@ -29,11 +29,11 @@ public class ItemStorageInMemory implements ItemStorage {
     @Override
     public Item update(Item item) {
         storage.replace(item.getId(), item);
-        return get(item.getId());
+        return getById(item.getId());
     }
 
     @Override
-    public void delete(long id) {
+    public void deleteById(long id) {
         storage.remove(id);
     }
 

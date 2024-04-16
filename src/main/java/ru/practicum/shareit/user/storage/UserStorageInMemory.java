@@ -16,7 +16,7 @@ public class UserStorageInMemory implements  UserStorage {
     private long id;
 
     @Override
-    public User get(long id) {
+    public User getById(long id) {
         if (storage.get(id) == null) {
             throw new DataNotFoundException("Пользователь с id " + id + " не найден.");
         }
@@ -28,17 +28,17 @@ public class UserStorageInMemory implements  UserStorage {
         id++;
         user.setId(id);
         storage.put(user.getId(), user);
-        return get(user.getId());
+        return getById(user.getId());
     }
 
     @Override
     public User update(User user) {
         storage.replace(user.getId(), user);
-        return get(user.getId());
+        return getById(user.getId());
     }
 
     @Override
-    public void delete(long id) {
+    public void deleteById(long id) {
         storage.remove(id);
     }
 

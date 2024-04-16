@@ -5,13 +5,6 @@ import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.model.User;
 
 public class UserMapper {
-    public static UserUpdateDto toUserDto(User user) {
-        return UserUpdateDto.builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .build();
-    }
-
     public static User toUser(UserUpdateDto user) {
         return User.builder()
                 .name(user.getName())

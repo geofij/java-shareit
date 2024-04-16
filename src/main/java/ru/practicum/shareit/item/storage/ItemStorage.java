@@ -5,13 +5,13 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemStorage {
-    Item get(long id);
+    Item getById(long id);
 
-    Item add(Item user);
+    Item save(Item user);
 
     Item update(Item user);
 
-    void delete(long id);
+    void deleteById(long id);
 
     List<Item> getAll();
 }

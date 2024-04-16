@@ -13,8 +13,8 @@ public class UserServiceImpl implements UserService {
     private final UserStorage storage;
 
     @Override
-    public User get(long id) {
-        return storage.get(id);
+    public User getById(long id) {
+        return storage.getById(id);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        User userFromStorage = storage.get(user.getId());
+        User userFromStorage = storage.getById(user.getId());
 
         updateUserFromDto(user, userFromStorage);
 
@@ -32,8 +32,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(long id) {
-        storage.delete(id);
+    public void deleteById(long id) {
+        storage.deleteById(id);
     }
 
     @Override

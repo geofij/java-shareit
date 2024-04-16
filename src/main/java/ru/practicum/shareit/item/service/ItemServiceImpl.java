@@ -15,18 +15,18 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
 
     @Override
-    public Item get(Long id) {
-        return itemStorage.get(id);
+    public Item getById(Long id) {
+        return itemStorage.getById(id);
     }
 
     @Override
-    public Item add(Item item) {
-        return itemStorage.add(item);
+    public Item save(Item item) {
+        return itemStorage.save(item);
     }
 
     @Override
     public Item update(Item item) {
-        Item itemUpdate = itemStorage.get(item.getId());
+        Item itemUpdate = itemStorage.getById(item.getId());
 
         updateItemFromDto(item, itemUpdate);
 
@@ -34,8 +34,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void delete(Long id) {
-        itemStorage.delete(id);
+    public void deleteById(Long id) {
+        itemStorage.deleteById(id);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> search(String text) {
+    public List<Item> searchByText(String text) {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();
         }

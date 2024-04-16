@@ -21,21 +21,20 @@ public class UserController {
 
     @PostMapping
     public User add(@Valid @RequestBody UserCreateDto user) {
-        User newUser = UserMapper.toUser(user);
-
         validateEmailNotUsed(user.getEmail());
+
+        User newUser = UserMapper.toUser(user);
 
         return service.add(newUser);
     }
 
     @PatchMapping("/{id}")
     public User update(@Valid @RequestBody UserUpdateDto user, @PathVariable("id") long id) {
-        User newUser = UserMapper.toUser(user);
-
-        if (newUser.getEmail() != null && !isSameEmail(newUser.getEmail(), id)) {
+        if (user.getEmail() != null && !isSameEmail(user.getEmail(), id)) {
             validateEmailNotUsed(user.getEmail());
         }
 
+        User newUser = UserMapper.toUser(user);
         newUser.setId(id);
 
         return service.update(newUser);
@@ -43,7 +42,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable("id") long id) {
-        return service.get(id);
+        return service.getById(id);
     }
 
     @GetMapping
@@ -53,7 +52,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable("id") long id) {
-        service.delete(id);
+        service.deleteById(id);
     }
 
     private void validateEmailNotUsed(String email) {
@@ -69,6 +68,6 @@ public class UserController {
     }
 
     private boolean isSameEmail(String email, long id) {
-        return service.get(id).getEmail().equals(email);
+        return service.getById(id).getEmail().equals(email);
     }
 }

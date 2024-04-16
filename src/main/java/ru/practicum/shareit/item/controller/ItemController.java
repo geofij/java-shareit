@@ -22,30 +22,30 @@ public class ItemController {
 
     @PostMapping
     public Item add(@Valid @RequestBody ItemCreateDto item, @RequestHeader("X-Sharer-User-Id") long ownerId) {
-        userService.get(ownerId);
+        userService.getById(ownerId);
 
-        Item newItem = ItemMapper.toItem(item);
-        newItem.setOwnerId(ownerId);
-        return itemService.add(newItem);
+        Item newItem = ItemMapper.toItem(item, ownerId);
+
+        return itemService.save(newItem);
     }
 
     @PatchMapping("/{itemId}")
     public Item update(@RequestBody ItemUpdateDto item,
                        @RequestHeader("X-Sharer-User-Id") long ownerId,
                        @PathVariable("itemId") long id) {
-        if (itemService.get(id).getOwnerId() != ownerId) {
+        if (itemService.getById(id).getOwnerId() != ownerId) {
             throw new UserIsNotOwnerException("Недостаточно прав для редактирования.");
         }
 
-        Item newItem = ItemMapper.toItem(item);
-        newItem.setOwnerId(ownerId);
+        Item newItem = ItemMapper.toItem(item, ownerId);
+
         newItem.setId(id);
         return itemService.update(newItem);
     }
 
     @GetMapping("/{itemId}")
     public Item getItemById(@PathVariable("itemId") long id) {
-        return itemService.get(id);
+        return itemService.getById(id);
     }
 
     @GetMapping
@@ -55,6 +55,6 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<Item> search(@RequestParam("text") String text) {
-        return itemService.search(text);
+        return itemService.searchByText(text);
     }
 }
