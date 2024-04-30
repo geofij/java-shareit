@@ -7,16 +7,12 @@ public class RequestMapper {
     public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
         return ItemRequestDto.builder()
                 .description(itemRequest.getDescription())
-                .requesterId(itemRequest.getRequesterId())
-                .created(itemRequest.getCreated())
                 .build();
     }
 
     public static ItemRequest toItemRequest(ItemRequestDto itemRequest) {
         return ItemRequest.builder()
                 .description(itemRequest.getDescription())
-                .requesterId(itemRequest.getRequesterId())
-                .created(itemRequest.getCreated())
                 .build();
     }
 }

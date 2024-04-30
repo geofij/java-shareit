@@ -8,7 +8,6 @@ public class BookingMapper {
         return BookingDto.builder()
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .itemId(booking.getItemId())
                 .status(booking.getStatus())
                 .build();
     }
@@ -17,7 +16,6 @@ public class BookingMapper {
         return Booking.builder()
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .itemId(booking.getItemId())
                 .status(booking.getStatus())
                 .build();
     }

@@ -21,7 +21,7 @@ public class UserController {
 
     @PostMapping
     public User add(@Valid @RequestBody UserCreateDto user) {
-        validateEmailNotUsed(user.getEmail());
+      //  validateEmailNotUsed(user.getEmail());
 
         User newUser = UserMapper.toUser(user);
 
@@ -30,9 +30,9 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public User update(@Valid @RequestBody UserUpdateDto user, @PathVariable("id") long id) {
-        if (user.getEmail() != null && !isSameEmail(user.getEmail(), id)) {
-            validateEmailNotUsed(user.getEmail());
-        }
+//        if (user.getEmail() != null && !isSameEmail(user.getEmail(), id)) {
+//            validateEmailNotUsed(user.getEmail());
+//        }
 
         User newUser = UserMapper.toUser(user);
         newUser.setId(id);
@@ -55,17 +55,17 @@ public class UserController {
         service.deleteById(id);
     }
 
-    private void validateEmailNotUsed(String email) {
-        List<String> emails = service.getAll().stream()
-                .map(user -> user.getEmail())
-                .collect(Collectors.toList());
-
-        for (String userEmail: emails) {
-            if (userEmail.equals(email)) {
-                throw new EmailUsedValidationException("Почта уже занята.");
-            }
-        }
-    }
+//    private void validateEmailNotUsed(String email) {
+//        List<String> emails = service.getAll().stream()
+//                .map(user -> user.getEmail())
+//                .collect(Collectors.toList());
+//
+//        for (String userEmail: emails) {
+//            if (userEmail.equals(email)) {
+//                throw new EmailUsedValidationException("Почта уже занята.");
+//            }
+//        }
+//    }
 
     private boolean isSameEmail(String email, long id) {
         return service.getById(id).getEmail().equals(email);

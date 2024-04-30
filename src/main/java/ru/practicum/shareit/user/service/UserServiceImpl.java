@@ -3,32 +3,33 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserStorage storage;
+    private final UserRepository storage;
 
     @Override
     public User getById(long id) {
-        return storage.getById(id);
+        return storage.findById(id).get();
     }
 
     @Override
     public User add(User user) {
-        return storage.add(user);
+        return storage.save(user);
     }
 
     @Override
     public User update(User user) {
-        User userFromStorage = storage.getById(user.getId());
+        User userFromStorage = storage.getReferenceById(user.getId());
 
         updateUserFromDto(user, userFromStorage);
 
-        return storage.update(userFromStorage);
+        return storage.save(userFromStorage);
     }
 
     @Override
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAll() {
-        return storage.getAll();
+        return storage.findAll();
     }
 
     private void updateUserFromDto(User userDto, User updatedUser) {

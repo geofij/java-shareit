@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.item.storage.ItemRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class ItemServiceImpl implements ItemService {
-    private final ItemStorage itemStorage;
+    private final ItemRepository itemStorage;
 
     @Override
     public Item getById(Long id) {
-        return itemStorage.getById(id);
+        return itemStorage.findById(id).get();
     }
 
     @Override
@@ -26,11 +26,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item update(Item item) {
-        Item itemUpdate = itemStorage.getById(item.getId());
+        Item itemUpdate = itemStorage.findById(item.getId()).get();
 
         updateItemFromDto(item, itemUpdate);
 
-        return itemStorage.update(itemUpdate);
+        return itemStorage.save(itemUpdate);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> getAll(long ownerId) {
-        return itemStorage.getAll().stream()
-                .filter(item -> item.getOwnerId() == ownerId)
+        return itemStorage.findAll().stream()
+                .filter(item -> item.getOwner().getId() == ownerId)
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +51,7 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
 
-        return itemStorage.getAll().stream()
+        return itemStorage.findAll().stream()
                 .filter(item -> item.getDescription().toLowerCase().contains(text.toLowerCase())
                         && item.getAvailable())
                 .collect(Collectors.toList());

@@ -17,7 +17,4 @@ public class ItemRequestDto {
 
     @NotNull
     private Long requesterId;
-
-    @NotNull
-    private LocalDateTime created;
 }

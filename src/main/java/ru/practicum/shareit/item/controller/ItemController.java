@@ -33,7 +33,7 @@ public class ItemController {
     public Item update(@RequestBody ItemUpdateDto item,
                        @RequestHeader("X-Sharer-User-Id") long ownerId,
                        @PathVariable("itemId") long id) {
-        if (itemService.getById(id).getOwnerId() != ownerId) {
+        if (itemService.getById(id).getOwner().getId() != ownerId) {
             throw new UserIsNotOwnerException("Недостаточно прав для редактирования.");
         }
 
