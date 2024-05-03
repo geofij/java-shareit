@@ -16,13 +16,50 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleUserIsNotOwnerException(UserIsNotOwnerException e) {
+    public ErrorResponse handleAccessErrorException(AccessErrorException e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleDataNotFoundException(final DataNotFoundException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleOwnerCanNotBeBookerException(final OwnerCanNotBeBookerException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotAvailableItemCanNotBeBookException(final NotAvailableItemCanNotBeBookException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBookingStartEndValidationException(final BookingStartEndValidationException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleWrongStateException(final WrongStateException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleItemNotBeBookedException(final ItemNotBeBookedException e) {
         return new ErrorResponse(
                 e.getMessage()
         );

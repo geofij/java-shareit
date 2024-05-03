@@ -1,0 +1,144 @@
+package ru.practicum.shareit.booking.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingCreateDto;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.exception.*;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.storage.UserRepository;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RequiredArgsConstructor
+@Service
+public class BookingServiceImpl implements BookingService{
+    private final BookingRepository bookingRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+
+
+    @Override
+    public Booking getById(long bookingId, long userId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new DataNotFoundException("Бронирование не найдено."));
+
+        if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
+            throw new DataNotFoundException("Бронирование не найдено.");
+        }
+
+        return booking;
+    }
+
+    @Override
+    public Booking create(BookingCreateDto bookingDto, long userId) {
+        Item item = itemRepository.findById(bookingDto.getItemId())
+                .orElseThrow(() -> new DataNotFoundException("Объект для бронирования не найден."));
+
+        if (!item.getAvailable()) {
+            throw new NotAvailableItemCanNotBeBookException("Недоступно для бронирования.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("Пользователь не найден."));
+
+        if (user.getId().equals(item.getOwner().getId())) {
+            throw new OwnerCanNotBeBookerException("Владелец не может забронировать свой предмет.");
+        }
+
+        return bookingRepository.save(BookingMapper.toNewBooking(bookingDto, item, user));
+    }
+
+    @Override
+    public void deleteById(long id) {
+        bookingRepository.deleteById(id);
+    }
+
+    @Override
+    public Booking approveBooking(boolean isApproved, long bookingId, long userId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new DataNotFoundException("Бронирование не найдено"));
+
+        if (userId != booking.getItem().getOwner().getId()) {
+            throw new DataNotFoundException("Только владелец может менять статус.");
+        }
+
+        if ((booking.getStatus().equals(BookingStatus.APPROVED) && isApproved) ||
+                (booking.getStatus().equals(BookingStatus.REJECTED) && !isApproved)) {
+            throw new WrongStateException("Указанный статус уже выставлен.");
+        }
+
+        if (isApproved) {
+            booking.setStatus(BookingStatus.APPROVED);
+        } else {
+            booking.setStatus(BookingStatus.REJECTED);
+        }
+
+        return bookingRepository.save(booking);
+    }
+
+    @Override
+    public List<Booking> getUserBookingsByState(long userId, String state) {
+        List<Booking> allBookings = bookingRepository.findAllByBookerId(userId);
+
+        if (allBookings.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return sortByDateAndFilterBookingsByState(allBookings, state);
+    }
+
+    @Override
+    public List<Booking> getBookingsByItemsOwner(long ownerId, String state) {
+        List<Booking> allBookings = bookingRepository.findAllByItemOwnerIdOrderById(ownerId);
+
+        if (allBookings.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return sortByDateAndFilterBookingsByState(allBookings, state);
+    }
+
+    private List<Booking> sortByDateAndFilterBookingsByState(List<Booking> bookingList, String state) {
+        bookingList = bookingList.stream()
+                .sorted(Comparator.comparing(Booking::getStart).reversed())
+                .collect(Collectors.toList());
+
+        switch (state) {
+            case ("WAITING"):
+                return bookingList.stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
+                        .collect(Collectors.toList());
+            case ("REJECTED"):
+                return bookingList.stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
+                        .collect(Collectors.toList());
+            case ("CURRENT"):
+                return bookingList.stream()
+                        .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) &&
+                                booking.getEnd().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            case ("PAST"):
+                return bookingList.stream()
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED) &&
+                                booking.getEnd().isBefore(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            case ("FUTURE"):
+                return bookingList.stream()
+                        .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED) &&
+                                booking.getStart().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+            default:
+                return bookingList;
+        }
+    }
+}
