@@ -9,6 +9,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface UserService {
     User getUserById(long id);
+
     UserResponseDto getById(long id);
 
     @Transactional

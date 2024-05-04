@@ -42,6 +42,7 @@ public class ItemMapper {
                 .build();
 
     }
+
     public static ItemResponseWithBookingAndCommentDto toItemResponseDto(Item item,
                                                                          List<CommentCreatedResponseDto> comments) {
         return ItemResponseWithBookingAndCommentDto.builder()

@@ -41,6 +41,7 @@ public class ItemServiceImpl implements ItemService {
 
         return getItemWithBookingsAndComments(item, userId);
     }
+
     @Override
     public Item getById(Long id) {
         return itemRepository.findById(id)
