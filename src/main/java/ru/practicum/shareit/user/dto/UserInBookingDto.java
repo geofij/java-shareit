@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.user.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,9 +7,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class ItemResponseDto {
+public class UserInBookingDto {
     private Long id;
-    private String name;
-    private String description;
-    private Boolean available;
 }

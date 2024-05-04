@@ -2,47 +2,59 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DataNotFoundException;
+import ru.practicum.shareit.user.dto.UserResponseDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository storage;
 
     @Override
-    public User getById(long id) {
+    public User getUserById(long id) {
         return storage.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Пользователь не найден."));
     }
 
     @Override
-    public User add(User user) {
-        return storage.save(user);
+    public UserResponseDto getById(long id) {
+        return UserMapper.toUserResponseDto(storage.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Пользователь не найден.")));
     }
 
     @Override
-    public User update(User user) {
+    @Transactional
+    public UserResponseDto add(User user) {
+        return UserMapper.toUserResponseDto(storage.save(user));
+    }
+
+    @Override
+    @Transactional
+    public UserResponseDto update(User user) {
         User userFromStorage = storage.findById(user.getId())
                 .orElseThrow(() -> new DataNotFoundException("Пользователь не найден."));
 
         updateUserFromDto(user, userFromStorage);
 
-        return storage.save(userFromStorage);
+        return UserMapper.toUserResponseDto(storage.save(userFromStorage));
     }
 
     @Override
+    @Transactional
     public void deleteById(long id) {
         storage.deleteById(id);
     }
 
     @Override
-    public List<User> getAll() {
-        return storage.findAll();
+    public List<UserResponseDto> getAll() {
+        return UserMapper.mapUserResponseDto(storage.findAll());
     }
 
     private void updateUserFromDto(User userDto, User updatedUser) {

@@ -3,7 +3,7 @@ package ru.practicum.shareit.booking.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
-import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.BookingStartEndValidationException;
 import ru.practicum.shareit.exception.WrongStateException;
@@ -20,8 +20,8 @@ public class BookingController {
     private final UserService userService;
 
     @PostMapping
-    public Booking createBooking(@Valid @RequestBody BookingCreateDto bookingDto,
-                                 @RequestHeader("X-Sharer-User-Id") long userId) {
+    public BookingResponseDto createBooking(@Valid @RequestBody BookingCreateDto bookingDto,
+                                            @RequestHeader("X-Sharer-User-Id") long userId) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
             throw new BookingStartEndValidationException("Начало бронирования не может быть позже или равно окончанию.");
         }
@@ -30,20 +30,20 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public Booking approveBookingByOwner(@RequestParam("approved") boolean isApproved,
+    public BookingResponseDto approveBookingByOwner(@RequestParam("approved") boolean isApproved,
                                          @PathVariable("bookingId") long bookingId,
                                          @RequestHeader("X-Sharer-User-Id") long userId) {
         return bookingService.approveBooking(isApproved, bookingId, userId);
     }
 
     @GetMapping("/{bookingId}")
-    public Booking getBookingById(@PathVariable("bookingId") long bookingId,
+    public BookingResponseDto getBookingById(@PathVariable("bookingId") long bookingId,
                                   @RequestHeader("X-Sharer-User-Id") long userId) {
         return bookingService.getById(bookingId, userId);
     }
 
     @GetMapping
-    public List<Booking> getCurrentUserBookingsByState(@RequestParam(name = "state", defaultValue = "ALL") String state,
+    public List<BookingResponseDto> getCurrentUserBookingsByState(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                        @RequestHeader("X-Sharer-User-Id") long userId) {
         validateState(state);
         userService.getById(userId);
@@ -52,7 +52,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<Booking> getBookingsByItemsOwner(@RequestParam(name = "state", defaultValue = "ALL") String state,
+    public List<BookingResponseDto> getBookingsByItemsOwner(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                  @RequestHeader("X-Sharer-User-Id") long userId) {
         validateState(state);
         userService.getById(userId);
