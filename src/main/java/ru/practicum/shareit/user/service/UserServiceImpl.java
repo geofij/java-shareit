@@ -12,18 +12,19 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository storage;
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserById(long id) {
         return storage.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Пользователь не найден."));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponseDto getById(long id) {
         return UserMapper.toUserResponseDto(storage.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Пользователь не найден.")));
@@ -53,8 +54,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponseDto> getAll() {
         return UserMapper.mapUserResponseDto(storage.findAll());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void isUserExist(Long userId) {
+        storage.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("Пользователь не найден."));
+
     }
 
     private void updateUserFromDto(User userDto, User updatedUser) {

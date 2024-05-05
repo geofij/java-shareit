@@ -36,19 +36,27 @@ public class BookingMapper {
     }
 
     public static BookingResponseDto toBookingResponseDto(Booking booking) {
-        return BookingResponseDto.builder()
+        BookingResponseDto dto = BookingResponseDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
-                .item(ItemInBookingDto.builder()
-                        .id(booking.getItem().getId())
-                        .name(booking.getItem().getName())
-                        .build())
-                .booker(UserInBookingDto.builder()
-                        .id(booking.getBooker().getId())
-                        .build())
                 .status(booking.getStatus())
                 .build();
+
+        if (booking.getItem() != null) {
+            dto.setItem(ItemInBookingDto.builder()
+                    .id(booking.getItem().getId())
+                    .name(booking.getItem().getName())
+                    .build());
+        }
+
+        if (booking.getBooker() != null) {
+            dto.setBooker(UserInBookingDto.builder()
+                    .id(booking.getBooker().getId())
+                    .build());
+        }
+
+        return dto;
     }
 
     public static List<BookingResponseDto> mapBookingResponseDto(List<Booking> bookings) {

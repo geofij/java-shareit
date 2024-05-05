@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Slf4j
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -35,6 +34,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public ItemResponseWithBookingAndCommentDto getById(Long id, Long userId) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Вещь не найдена."));
@@ -43,6 +43,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Item getById(Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Вещь не найдена."));
@@ -68,6 +69,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemResponseWithBookingAndCommentDto> getAllOwnerItems(long ownerId) {
         List<Item> itemsFromDb = itemRepository.findAllByOwnerIdOrderById(ownerId);
         List<ItemResponseWithBookingAndCommentDto> dtos = new ArrayList<>();
@@ -90,6 +92,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemResponseDto> searchByText(String text) {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();

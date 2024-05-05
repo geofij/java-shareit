@@ -46,7 +46,7 @@ public class BookingController {
     public List<BookingResponseDto> getCurrentUserBookingsByState(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                        @RequestHeader("X-Sharer-User-Id") long userId) {
         validateState(state);
-        userService.getById(userId);
+        userService.isUserExist(userId);
 
         return bookingService.getUserBookingsByState(userId, state);
     }
@@ -55,7 +55,7 @@ public class BookingController {
     public List<BookingResponseDto> getBookingsByItemsOwner(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                  @RequestHeader("X-Sharer-User-Id") long userId) {
         validateState(state);
-        userService.getById(userId);
+        userService.isUserExist(userId);
 
         return bookingService.getBookingsByItemsOwner(userId, state);
     }

@@ -18,9 +18,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                                   BookingStatus status,
                                                                   LocalDateTime date);
 
-    @Query(" select b from Booking as b" +
-    " where b.item.id = ?1 and status = ?2 and (b.end < ?3 or b.start < ?3)" +
-    " order by b.start desc")
+    @Query(" select b from Booking as b " +
+            "where b.item.id = ?1 " +
+            "and status = ?2 and (b.end < ?3 or b.start < ?3) " +
+            "order by b.start desc")
     List<Booking> findLastBooking(Long itemId, BookingStatus status, LocalDateTime now);
 
     List<Booking> findAllByItemIdAndStatusNotAndStartAfterOrderByStart(Long itemId, BookingStatus status, LocalDateTime now);

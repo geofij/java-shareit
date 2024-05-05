@@ -28,8 +28,8 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-
     @Override
+    @Transactional(readOnly = true)
     public BookingResponseDto getById(long bookingId, long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new DataNotFoundException("Бронирование не найдено."));
@@ -92,6 +92,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingResponseDto> getUserBookingsByState(long userId, String state) {
         List<Booking> allBookings = bookingRepository.findAllByBookerId(userId);
 
@@ -103,6 +104,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingResponseDto> getBookingsByItemsOwner(long ownerId, String state) {
         List<Booking> allBookings = bookingRepository.findAllByItemOwnerIdOrderById(ownerId);
 
