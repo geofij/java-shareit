@@ -7,10 +7,9 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class ItemUpdateDto {
+public class ItemResponseDto {
+    private Long id;
     private String name;
-
     private String description;
-
     private Boolean available;
 }

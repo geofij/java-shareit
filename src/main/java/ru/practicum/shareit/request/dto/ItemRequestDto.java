@@ -1,7 +1,5 @@
 package ru.practicum.shareit.request.dto;
 
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +15,4 @@ public class ItemRequestDto {
 
     @NotNull
     private Long requesterId;
-
-    @NotNull
-    private LocalDateTime created;
 }

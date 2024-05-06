@@ -2,12 +2,12 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.UserIsNotOwnerException;
-import ru.practicum.shareit.item.dto.ItemCreateDto;
-import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.exception.AccessErrorException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
@@ -21,40 +21,50 @@ public class ItemController {
     private final UserService userService;
 
     @PostMapping
-    public Item add(@Valid @RequestBody ItemCreateDto item, @RequestHeader("X-Sharer-User-Id") long ownerId) {
-        userService.getById(ownerId);
+    public ItemResponseDto add(@Valid @RequestBody ItemCreateDto item, @RequestHeader("X-Sharer-User-Id") long ownerId) {
+        User owner = userService.getUserById(ownerId);
 
-        Item newItem = ItemMapper.toItem(item, ownerId);
+        Item newItem = ItemMapper.toItem(item, owner);
 
         return itemService.save(newItem);
     }
 
     @PatchMapping("/{itemId}")
-    public Item update(@RequestBody ItemUpdateDto item,
-                       @RequestHeader("X-Sharer-User-Id") long ownerId,
-                       @PathVariable("itemId") long id) {
-        if (itemService.getById(id).getOwnerId() != ownerId) {
-            throw new UserIsNotOwnerException("Недостаточно прав для редактирования.");
+    public ItemResponseDto update(@RequestBody ItemUpdateDto item,
+                                  @RequestHeader("X-Sharer-User-Id") long ownerId,
+                                  @PathVariable("itemId") long id) {
+        Item itemUpdate = itemService.getById(id);
+
+        if (itemUpdate.getOwner().getId() != ownerId) {
+            throw new AccessErrorException("Недостаточно прав для редактирования.");
         }
 
-        Item newItem = ItemMapper.toItem(item, ownerId);
+        Item newItem = ItemMapper.toItem(item, itemUpdate.getOwner());
 
         newItem.setId(id);
-        return itemService.update(newItem);
+        return itemService.update(newItem, itemUpdate);
     }
 
     @GetMapping("/{itemId}")
-    public Item getItemById(@PathVariable("itemId") long id) {
-        return itemService.getById(id);
+    public ItemResponseWithBookingAndCommentDto getItemById(@PathVariable("itemId") long id,
+                                                            @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.getById(id, userId);
     }
 
     @GetMapping
-    public List<Item> getAll(@RequestHeader("X-Sharer-User-Id") long ownerId) {
-        return itemService.getAll(ownerId);
+    public List<ItemResponseWithBookingAndCommentDto> getAll(@RequestHeader("X-Sharer-User-Id") long ownerId) {
+        return itemService.getAllOwnerItems(ownerId);
     }
 
     @GetMapping("/search")
-    public List<Item> search(@RequestParam("text") String text) {
+    public List<ItemResponseDto> search(@RequestParam("text") String text, @RequestHeader("X-Sharer-User-Id") long ownerId) {
         return itemService.searchByText(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentCreatedResponseDto addNewCommentToItem(@Valid @RequestBody CommentCreateDto commentDto,
+                                                         @PathVariable("itemId") long id,
+                                                         @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.createNewComment(commentDto, id, userId);
     }
 }

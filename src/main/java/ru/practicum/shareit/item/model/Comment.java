@@ -4,33 +4,28 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "items")
+@Table(name = "comments")
 @Data
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor
-public class Item {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String description;
-
-    @Column(name = "is_available")
-    private Boolean available;
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @JoinColumn(name = "author_id")
+    private User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;
+    @JoinColumn(name = "item_id")
+    private Item item;
 }

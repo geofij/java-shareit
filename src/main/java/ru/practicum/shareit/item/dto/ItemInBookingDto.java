@@ -7,10 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-public class ItemUpdateDto {
+public class ItemInBookingDto {
+    private Long id;
     private String name;
-
-    private String description;
-
-    private Boolean available;
 }
