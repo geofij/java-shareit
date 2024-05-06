@@ -77,8 +77,8 @@ public class BookingServiceImpl implements BookingService {
             throw new DataNotFoundException("Только владелец может менять статус.");
         }
 
-        if ((booking.getStatus().equals(BookingStatus.APPROVED) && isApproved) ||
-                (booking.getStatus().equals(BookingStatus.REJECTED) && !isApproved)) {
+        if ((booking.getStatus().equals(BookingStatus.APPROVED) && isApproved)
+                || (booking.getStatus().equals(BookingStatus.REJECTED) && !isApproved)) {
             throw new WrongStateException("Указанный статус уже выставлен.");
         }
 
@@ -133,20 +133,20 @@ public class BookingServiceImpl implements BookingService {
                 break;
             case ("CURRENT"):
                 bookingList = bookingList.stream()
-                        .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) &&
-                                booking.getEnd().isAfter(LocalDateTime.now()))
+                        .filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
+                                && booking.getEnd().isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
                 break;
             case ("PAST"):
                 bookingList = bookingList.stream()
-                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED) &&
-                                booking.getEnd().isBefore(LocalDateTime.now()))
+                        .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED)
+                                && booking.getEnd().isBefore(LocalDateTime.now()))
                         .collect(Collectors.toList());
                 break;
             case ("FUTURE"):
                 bookingList = bookingList.stream()
-                        .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED) &&
-                                booking.getStart().isAfter(LocalDateTime.now()))
+                        .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED)
+                                && booking.getStart().isAfter(LocalDateTime.now()))
                         .collect(Collectors.toList());
                 break;
         }
