@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
@@ -93,8 +96,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingResponseDto> getUserBookingsByState(long userId, String state) {
-        List<Booking> allBookings = bookingRepository.findAllByBookerId(userId);
+    public List<BookingResponseDto> getUserBookingsByState(long userId, String state, int from, int size) {
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by("id").descending());
+        List<Booking> allBookings = bookingRepository.findAllByBookerId(userId, reqPage);
 
         if (allBookings.isEmpty()) {
             return new ArrayList<>();
@@ -105,8 +109,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingResponseDto> getBookingsByItemsOwner(long ownerId, String state) {
-        List<Booking> allBookings = bookingRepository.findAllByItemOwnerIdOrderById(ownerId);
+    public List<BookingResponseDto> getBookingsByItemsOwner(long ownerId, String state, int from, int size) {
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by("id").descending());
+        List<Booking> allBookings = bookingRepository.findAllByItemOwnerId(ownerId, reqPage);
 
         if (allBookings.isEmpty()) {
             return new ArrayList<>();
@@ -116,37 +121,42 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private List<BookingResponseDto> sortByDateAndFilterBookingsByState(List<Booking> bookingList, String state) {
-        bookingList = bookingList.stream()
-                .sorted(Comparator.comparing(Booking::getStart).reversed())
-                .collect(Collectors.toList());
+//        bookingList = bookingList.stream()
+//                .sorted(Comparator.comparing(Booking::getStart).reversed())
+//                .collect(Collectors.toList());
 
         switch (state) {
             case ("WAITING"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("REJECTED"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("CURRENT"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
                                 && booking.getEnd().isAfter(LocalDateTime.now()))
+                        .sorted(Comparator.comparing(Booking::getEnd).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("PAST"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED)
                                 && booking.getEnd().isBefore(LocalDateTime.now()))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("FUTURE"):
                 bookingList = bookingList.stream()
                         .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED)
                                 && booking.getStart().isAfter(LocalDateTime.now()))
+                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
         }

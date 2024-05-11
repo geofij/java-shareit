@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 
@@ -22,5 +23,5 @@ public class ItemRequest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id")
-    private ItemRequest requester;
+    private User requester;
 }

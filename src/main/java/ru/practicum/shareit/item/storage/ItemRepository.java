@@ -13,4 +13,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> searchByText(String text);
 
     List<Item> findAllByOwnerIdOrderById(Long id);
+
+    List<Item> findAllByRequestIdInOrderByIdDesc(List<Long> ids);
 }

@@ -10,6 +10,7 @@ import ru.practicum.shareit.exception.WrongStateException;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -43,21 +44,27 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingResponseDto> getCurrentUserBookingsByState(@RequestParam(name = "state", defaultValue = "ALL") String state,
+    public List<BookingResponseDto> getCurrentUserBookingsByState(@RequestParam(name = "from", defaultValue = "0") int from,
+                                                                  @RequestParam(name = "size", defaultValue = "20") int size,
+                                                                  @RequestParam(name = "state", defaultValue = "ALL") String state,
                                                        @RequestHeader("X-Sharer-User-Id") long userId) {
+        validateFromSizeParams(from, size);
         validateState(state);
         userService.isUserExist(userId);
 
-        return bookingService.getUserBookingsByState(userId, state);
+        return bookingService.getUserBookingsByState(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public List<BookingResponseDto> getBookingsByItemsOwner(@RequestParam(name = "state", defaultValue = "ALL") String state,
+    public List<BookingResponseDto> getBookingsByItemsOwner(@RequestParam(name = "from", defaultValue = "0") int from,
+                                                            @RequestParam(name = "size", defaultValue = "20") int size,
+                                                            @RequestParam(name = "state", defaultValue = "ALL") String state,
                                                  @RequestHeader("X-Sharer-User-Id") long userId) {
+        validateFromSizeParams(from, size);
         validateState(state);
         userService.isUserExist(userId);
 
-        return bookingService.getBookingsByItemsOwner(userId, state);
+        return bookingService.getBookingsByItemsOwner(userId, state, from, size);
     }
 
     private void validateState(String state) {
@@ -68,6 +75,12 @@ public class BookingController {
                 !state.equals("PAST") &&
                 !state.equals("FUTURE")) {
             throw new WrongStateException("Unknown state: UNSUPPORTED_STATUS");
+        }
+    }
+
+    private void validateFromSizeParams(int from, int size) {
+        if (from < 0 || size <= 0) {
+            throw new WrongStateException("Неверные значения параметров.");
         }
     }
 }

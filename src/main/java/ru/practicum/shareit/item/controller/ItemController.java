@@ -7,8 +7,6 @@ import ru.practicum.shareit.exception.AccessErrorException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,15 +16,10 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
-    private final UserService userService;
 
     @PostMapping
     public ItemResponseDto add(@Valid @RequestBody ItemCreateDto item, @RequestHeader("X-Sharer-User-Id") long ownerId) {
-        User owner = userService.getUserById(ownerId);
-
-        Item newItem = ItemMapper.toItem(item, owner);
-
-        return itemService.save(newItem);
+        return itemService.save(item, ownerId);
     }
 
     @PatchMapping("/{itemId}")
