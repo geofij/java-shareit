@@ -10,7 +10,6 @@ import ru.practicum.shareit.exception.WrongStateException;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @RequiredArgsConstructor
