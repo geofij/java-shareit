@@ -10,8 +10,6 @@ public interface BookingService {
 
     BookingResponseDto create(BookingCreateDto bookingDto, long userId);
 
-    void deleteById(long id);
-
     BookingResponseDto approveBooking(boolean isApproved, long bookingId, long userId);
 
     List<BookingResponseDto> getUserBookingsByState(long userId, String state, int from, int size);

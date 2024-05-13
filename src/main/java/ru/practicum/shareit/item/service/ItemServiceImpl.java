@@ -78,12 +78,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
-    public void deleteById(Long id) {
-        itemRepository.deleteById(id);
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public List<ItemResponseWithBookingAndCommentDto> getAllOwnerItems(long ownerId) {
         List<Item> itemsFromDb = itemRepository.findAllByOwnerIdOrderById(ownerId);

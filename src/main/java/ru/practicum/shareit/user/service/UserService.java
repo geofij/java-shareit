@@ -6,8 +6,6 @@ import ru.practicum.shareit.user.model.User;
 import java.util.List;
 
 public interface UserService {
-    User getUserById(long id);
-
     UserResponseDto getById(long id);
 
     UserResponseDto add(User user);

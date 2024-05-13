@@ -66,12 +66,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
-        bookingRepository.deleteById(id);
-    }
-
-    @Override
-    @Transactional
     public BookingResponseDto approveBooking(boolean isApproved, long bookingId, long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new DataNotFoundException("Бронирование не найдено"));
@@ -121,10 +115,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private List<BookingResponseDto> sortByDateAndFilterBookingsByState(List<Booking> bookingList, String state) {
-//        bookingList = bookingList.stream()
-//                .sorted(Comparator.comparing(Booking::getStart).reversed())
-//                .collect(Collectors.toList());
-
         switch (state) {
             case ("WAITING"):
                 bookingList = bookingList.stream()

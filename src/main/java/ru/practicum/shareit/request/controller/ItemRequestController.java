@@ -9,7 +9,6 @@ import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @RequiredArgsConstructor

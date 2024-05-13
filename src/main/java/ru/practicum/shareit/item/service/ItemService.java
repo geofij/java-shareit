@@ -14,8 +14,6 @@ public interface ItemService {
 
     ItemResponseDto update(Item item, Item itemUpdate);
 
-    void deleteById(Long id);
-
     List<ItemResponseWithBookingAndCommentDto> getAllOwnerItems(long ownerId);
 
     List<ItemResponseDto> searchByText(String text);
