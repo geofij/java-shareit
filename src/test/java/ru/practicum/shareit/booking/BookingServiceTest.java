@@ -11,8 +11,10 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.exception.NotAvailableItemCanNotBeBookException;
 import ru.practicum.shareit.exception.OwnerCanNotBeBookerException;
+import ru.practicum.shareit.exception.WrongStateException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -117,6 +119,9 @@ public class BookingServiceTest {
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
         assertEquals(bookingService.approveBooking(false, 1L, 1L).getStatus(), BookingStatus.REJECTED);
+        assertEquals(bookingService.approveBooking(true, 1L, 1L).getStatus(), BookingStatus.APPROVED);
+        assertThrows(DataNotFoundException.class, () -> bookingService.approveBooking(false, 1L, 2L));
+        assertThrows(WrongStateException.class, () -> bookingService.approveBooking(true, 1L, 1L));
     }
 
     @Test
@@ -124,6 +129,7 @@ public class BookingServiceTest {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.ofNullable(booking));
 
         assertEquals(bookingService.getById(1L, 2L).getBooker().getId(), 2L);
+        assertThrows(DataNotFoundException.class, () -> bookingService.getById(1L, 3L));
     }
 
     @Test
@@ -147,6 +153,9 @@ public class BookingServiceTest {
 
         booking.setEnd(booking.getEnd().plusDays(5));
         assertEquals(bookingService.getUserBookingsByState(2L, "CURRENT", 0, 1).get(0).getId(), 1L);
+
+        when(bookingRepository.findAllByBookerId(anyLong(), any(Pageable.class))).thenReturn(List.of());
+        assertEquals(bookingService.getUserBookingsByState(2L, "ALL", 0, 1).size(), 0);
     }
 
     @Test
@@ -170,5 +179,8 @@ public class BookingServiceTest {
 
         booking.setEnd(booking.getEnd().plusDays(5));
         assertEquals(bookingService.getBookingsByItemsOwner(1L, "CURRENT", 0, 1).get(0).getId(), 1L);
+
+        when(bookingRepository.findAllByItemOwnerId(anyLong(), any(Pageable.class))).thenReturn(List.of());
+        assertEquals(bookingService.getBookingsByItemsOwner(1L, "ALL", 0, 1).size(), 0);
     }
 }
