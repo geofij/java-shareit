@@ -111,6 +111,14 @@ class ItemControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("item")));
+
+        mvc.perform(patch("/items/1")
+                        .content(mapper.writeValueAsString(itemIn))
+                        .header("X-Sharer-User-Id", "2")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 
     @Test

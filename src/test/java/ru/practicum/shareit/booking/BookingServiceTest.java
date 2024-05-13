@@ -11,6 +11,8 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.exception.NotAvailableItemCanNotBeBookException;
+import ru.practicum.shareit.exception.OwnerCanNotBeBookerException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -88,12 +90,23 @@ public class BookingServiceTest {
     }
 
     @Test
-    void shouldSave() {
+    void shouldCreate() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user2));
         when(itemRepository.findById(anyLong())).thenReturn(Optional.ofNullable(item));
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
 
         assertEquals(bookingService.create(bookingCreateDto, 2L).getBooker().getId(), 2L);
+
+        item.setAvailable(false);
+
+        assertThrows(NotAvailableItemCanNotBeBookException.class, () -> bookingService.create(bookingCreateDto, 2L));
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user));
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.ofNullable(item));
+
+        item.setAvailable(true);
+
+        assertThrows(OwnerCanNotBeBookerException.class, () -> bookingService.create(bookingCreateDto, 1L));
     }
 
     @Test

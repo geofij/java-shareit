@@ -8,11 +8,6 @@ import ru.practicum.shareit.exception.model.ErrorResponse;
 
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailUsedValidationException(EmailUsedValidationException e) {
-        return new ErrorResponse(e.getMessage());
-    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)

@@ -97,5 +97,14 @@ public class RequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+
+        mvc.perform(get("/requests/all")
+                        .param("from", "-1")
+                        .param("size", "0")
+                        .header("X-Sharer-User-Id", "1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

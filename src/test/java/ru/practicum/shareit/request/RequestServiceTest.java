@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exception.DataNotFoundException;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.RequestServiceImpl;
@@ -52,7 +53,10 @@ public class RequestServiceTest {
         ItemRequest request = ItemRequest.builder().id(1L).build();
 
         when(requestRepository.findById(1L)).thenReturn(Optional.ofNullable(request));
-        when(itemRepository.findAllByRequestIdInOrderByIdDesc(anyList())).thenReturn(new ArrayList<>());
+        when(itemRepository.findAllByRequestIdInOrderByIdDesc(anyList())).thenReturn(List.of(Item.builder()
+                        .id(1L)
+                        .name("item")
+                        .build()));
 
         var result = service.getRequestById(1L);
 

@@ -83,7 +83,7 @@ public class BookingControllerTest {
             .build();
 
     @Test
-    void shouldSave() throws Exception {
+    void shouldCreate() throws Exception {
         when(service.create(any(BookingCreateDto.class), anyLong())).thenReturn(bookingResponseDto);
 
         mvc.perform(post("/bookings")
@@ -94,6 +94,20 @@ public class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(BookingStatus.WAITING.name())));
+
+        BookingCreateDto wrongBookingIn = BookingCreateDto.builder()
+                .start(LocalDateTime.now().plusHours(10))
+                .end(LocalDateTime.now())
+                .itemId(1L)
+                .build();
+
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(wrongBookingIn))
+                        .header("X-Sharer-User-Id", "1")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

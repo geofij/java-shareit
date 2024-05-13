@@ -68,6 +68,6 @@ class UserServiceImplTest {
 
     @Test
     void isUserExist() {
-        assertThrows(DataNotFoundException.class, () -> userService.getById(2L));
+        assertThrows(DataNotFoundException.class, () -> userService.isUserExist(2L));
     }
 }

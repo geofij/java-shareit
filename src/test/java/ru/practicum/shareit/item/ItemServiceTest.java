@@ -18,6 +18,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.storage.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
@@ -95,11 +96,24 @@ class ItemServiceTest {
     void shouldSave() {
         when(itemRepository.save(any(Item.class))).thenReturn(item);
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(user1));
+        when(requestRepository.findById(anyLong())).thenReturn(Optional.ofNullable(ItemRequest.builder()
+                .id(1L)
+                .build()));
 
         ItemCreateDto createDto = ItemCreateDto.builder()
                 .name("item")
                 .description("item")
                 .available(true)
+                .build();
+
+        assert user1 != null;
+        assertEquals(itemService.save(createDto, user1.getId()).getId(), 1L);
+
+        createDto = ItemCreateDto.builder()
+                .name("item")
+                .description("item")
+                .available(true)
+                .requestId(1L)
                 .build();
 
         assert user1 != null;
@@ -161,6 +175,7 @@ class ItemServiceTest {
 
         assertEquals(itemService.searchByText("item").get(0).getId(), 1L);
         assertEquals(itemService.searchByText("noItem").size(), 0);
+        assertEquals(itemService.searchByText("").size(), 0);
     }
 
     @Test
