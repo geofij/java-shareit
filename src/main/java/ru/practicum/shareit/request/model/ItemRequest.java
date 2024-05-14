@@ -1,6 +1,10 @@
 package ru.practicum.shareit.request.model;
 
-import lombok.*;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.user.model.User;
 
@@ -9,7 +13,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "requests")
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor

@@ -1,6 +1,10 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.*;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.user.model.User;
 
@@ -8,7 +12,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "comments")
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor
