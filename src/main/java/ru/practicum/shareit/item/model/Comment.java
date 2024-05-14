@@ -8,7 +8,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "comments")
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor
