@@ -27,7 +27,7 @@ public class BookingController {
     public BookingResponseDto createBooking(@Valid @RequestBody BookingCreateDto bookingDto,
                                             @RequestHeader("X-Sharer-User-Id") long userId) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
-            throw new BookingStartEndValidationException("Начало бронирования не может быть позже или равно окончанию.");
+            throw new BookingStartEndValidationException("Начало бронирования не может быть позже или равно окончанию");
         }
 
         return bookingService.create(bookingDto, userId);
