@@ -1,13 +1,13 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Getter
+@Data
 @SuperBuilder
 @NoArgsConstructor
 public class ItemCreateDto {

@@ -2,9 +2,7 @@ package ru.practicum.shareit.booking.model;
 
 import java.time.LocalDateTime;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -13,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "bookings")
-@Data
+@Getter @Setter @ToString
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor

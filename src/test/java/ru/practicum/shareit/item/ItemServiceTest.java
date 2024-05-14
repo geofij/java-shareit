@@ -5,6 +5,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
@@ -28,8 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -170,12 +171,12 @@ class ItemServiceTest {
 
     @Test
     void shouldSearch() {
-        when(itemRepository.searchByText("item")).thenReturn(List.of(item));
-        when(itemRepository.searchByText("noItem")).thenReturn(List.of());
+        when(itemRepository.searchByText(eq("item"), any(Pageable.class))).thenReturn(List.of(item));
+        when(itemRepository.searchByText(eq("noItem"), any(Pageable.class))).thenReturn(List.of());
 
-        assertEquals(itemService.searchByText("item").get(0).getId(), 1L);
-        assertEquals(itemService.searchByText("noItem").size(), 0);
-        assertEquals(itemService.searchByText("").size(), 0);
+        assertEquals(itemService.searchByText("item", 1, 1).get(0).getId(), 1L);
+        assertEquals(itemService.searchByText("noItem", 1, 1).size(), 0);
+        assertEquals(itemService.searchByText("", 1, 1).size(), 0);
     }
 
     @Test
@@ -198,8 +199,8 @@ class ItemServiceTest {
 
     @Test
     void shouldGetAll() {
-        when(itemRepository.findAllByOwnerIdOrderById(anyLong())).thenReturn(List.of(item));
+        when(itemRepository.findAllByOwnerId(anyLong(), any(Pageable.class))).thenReturn(List.of(item));
 
-        assertEquals(itemService.getAllOwnerItems(1L).get(0).getDescription(), item.getDescription());
+        assertEquals(itemService.getAllOwnerItems(1L, 1, 1).get(0).getDescription(), item.getDescription());
     }
 }

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.WrongStateException;
 import ru.practicum.shareit.request.dto.RequestCreateDto;
@@ -9,10 +10,13 @@ import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Validated
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
     private final RequestService service;
@@ -32,10 +36,9 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<RequestResponseDto> getAllRequests(@RequestParam(name = "from", defaultValue = "0") int from,
-                                                   @RequestParam(name = "size", defaultValue = "10") int size,
+    public List<RequestResponseDto> getAllRequests(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                                   @RequestParam(name = "size", defaultValue = "10") @Positive int size,
                                                    @RequestHeader("X-Sharer-User-Id") long userId) {
-        validateFromSizeParams(from, size);
         userService.isUserExist(userId);
 
         return service.getAllRequests(from, size, userId);
@@ -47,11 +50,5 @@ public class ItemRequestController {
         userService.isUserExist(userId);
 
         return service.getRequestById(requestId);
-    }
-
-    private void validateFromSizeParams(int from, int size) {
-        if (from < 0 || size <= 0) {
-            throw new WrongStateException("Неверные значения параметров.");
-        }
     }
 }

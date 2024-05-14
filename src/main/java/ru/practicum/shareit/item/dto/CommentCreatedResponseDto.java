@@ -1,12 +1,12 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Data
 @SuperBuilder
 @NoArgsConstructor
 public class CommentCreatedResponseDto {

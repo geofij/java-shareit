@@ -12,11 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequestMapper {
-    public static RequestResponseDto toItemRequestDto(ItemRequest request, List<Item> items, LocalDateTime created) {
+    public static RequestResponseDto toItemRequestDto(ItemRequest request, List<Item> items) {
         RequestResponseDto dto = RequestResponseDto.builder()
                 .id(request.getId())
                 .description(request.getDescription())
-                .created(created)
+                .created(request.getCreated())
                 .build();
 
         if (!items.isEmpty()) {
@@ -32,6 +32,7 @@ public class RequestMapper {
         return ItemRequest.builder()
                 .description(itemRequest.getDescription())
                 .requester(requester)
+                .created(LocalDateTime.now())
                 .build();
     }
 }

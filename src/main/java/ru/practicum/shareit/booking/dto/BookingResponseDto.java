@@ -1,8 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemInBookingDto;
@@ -10,8 +9,7 @@ import ru.practicum.shareit.user.dto.UserInBookingDto;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @SuperBuilder
 @NoArgsConstructor
 public class BookingResponseDto {

@@ -123,7 +123,7 @@ class ItemControllerTest {
 
     @Test
     void shouldGetList() throws Exception {
-        when(service.getAllOwnerItems(anyLong())).thenReturn(List.of(itemOut2));
+        when(service.getAllOwnerItems(anyLong(), anyInt(), anyInt())).thenReturn(List.of(itemOut2));
 
         mvc.perform(get("/items")
                         .header("X-Sharer-User-Id", "1")
@@ -135,7 +135,7 @@ class ItemControllerTest {
 
     @Test
     void shouldSearch() throws Exception {
-        when(service.searchByText(anyString())).thenReturn(List.of(itemOut1));
+        when(service.searchByText(anyString(), anyInt(), anyInt())).thenReturn(List.of(itemOut1));
 
         mvc.perform(get("/items/search")
                         .param("text", "item")

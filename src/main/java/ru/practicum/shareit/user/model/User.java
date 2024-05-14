@@ -1,15 +1,13 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter @Setter @ToString
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor

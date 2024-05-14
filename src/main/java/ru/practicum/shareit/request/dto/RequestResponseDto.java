@@ -1,16 +1,14 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @SuperBuilder
 @NoArgsConstructor
 public class RequestResponseDto {

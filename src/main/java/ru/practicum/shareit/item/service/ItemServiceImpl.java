@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -79,8 +82,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemResponseWithBookingAndCommentDto> getAllOwnerItems(long ownerId) {
-        List<Item> itemsFromDb = itemRepository.findAllByOwnerIdOrderById(ownerId);
+    public List<ItemResponseWithBookingAndCommentDto> getAllOwnerItems(long ownerId, int from, int size) {
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC,"id"));
+
+        List<Item> itemsFromDb = itemRepository.findAllByOwnerId(ownerId, reqPage);
         List<ItemResponseWithBookingAndCommentDto> dtos = new ArrayList<>();
 
         List<Long> itemIds = itemsFromDb.stream()
@@ -102,14 +107,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemResponseDto> searchByText(String text) {
+    public List<ItemResponseDto> searchByText(String text, int from, int size) {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();
         }
 
-        return ItemMapper.mapItemInfoDto(itemRepository.searchByText(text).stream()
-                .filter(Item::getAvailable)
-                .collect(Collectors.toList()));
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC,"id"));
+
+        return ItemMapper.mapItemInfoDto(itemRepository.searchByText(text, reqPage));
     }
 
     @Override

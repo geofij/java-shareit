@@ -17,7 +17,6 @@ import ru.practicum.shareit.request.storage.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +36,7 @@ public class RequestServiceImpl implements RequestService {
 
         ItemRequest newRequest = RequestMapper.toItemRequest(request, user);
 
-        return RequestMapper.toItemRequestDto(requestRepository.save(newRequest), new ArrayList<>(), LocalDateTime.now());
+        return RequestMapper.toItemRequestDto(requestRepository.save(newRequest), new ArrayList<>());
     }
 
     @Override
@@ -51,7 +50,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional(readOnly = true)
     public List<RequestResponseDto> getAllRequests(int from, int size, long userId) {
-        Pageable reqPage = PageRequest.of(from / size, size, Sort.by("id").descending());
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC,"created"));
 
         List<ItemRequest> requests = requestRepository.findAllByRequesterIdNot(userId, reqPage);
 
@@ -66,7 +65,7 @@ public class RequestServiceImpl implements RequestService {
 
         List<Item> items = itemRepository.findAllByRequestIdInOrderByIdDesc(List.of(requestId));
 
-        return RequestMapper.toItemRequestDto(request, items, LocalDateTime.now().minusSeconds(10));
+        return RequestMapper.toItemRequestDto(request, items);
     }
 
     private List<RequestResponseDto> getRequestDtoListFromRequestList(List<ItemRequest> requestList) {
@@ -83,7 +82,7 @@ public class RequestServiceImpl implements RequestService {
                     .filter(item -> item.getRequest().getId().equals(request.getId()))
                     .collect(Collectors.toList());
 
-            dtos.add(RequestMapper.toItemRequestDto(request, requestItems, LocalDateTime.now().minusSeconds(10)));
+            dtos.add(RequestMapper.toItemRequestDto(request, requestItems));
         }
 
         return dtos;

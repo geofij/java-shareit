@@ -20,7 +20,6 @@ import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,7 +90,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<BookingResponseDto> getUserBookingsByState(long userId, String state, int from, int size) {
-        Pageable reqPage = PageRequest.of(from / size, size, Sort.by("id").descending());
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
         List<Booking> allBookings = bookingRepository.findAllByBookerId(userId, reqPage);
 
         if (allBookings.isEmpty()) {
@@ -104,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<BookingResponseDto> getBookingsByItemsOwner(long ownerId, String state, int from, int size) {
-        Pageable reqPage = PageRequest.of(from / size, size, Sort.by("id").descending());
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
         List<Booking> allBookings = bookingRepository.findAllByItemOwnerId(ownerId, reqPage);
 
         if (allBookings.isEmpty()) {
@@ -119,34 +118,29 @@ public class BookingServiceImpl implements BookingService {
             case ("WAITING"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.WAITING))
-                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("REJECTED"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.REJECTED))
-                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("CURRENT"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStart().isBefore(LocalDateTime.now())
                                 && booking.getEnd().isAfter(LocalDateTime.now()))
-                        .sorted(Comparator.comparing(Booking::getEnd).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("PAST"):
                 bookingList = bookingList.stream()
                         .filter(booking -> booking.getStatus().equals(BookingStatus.APPROVED)
                                 && booking.getEnd().isBefore(LocalDateTime.now()))
-                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
             case ("FUTURE"):
                 bookingList = bookingList.stream()
                         .filter(booking -> !booking.getStatus().equals(BookingStatus.REJECTED)
                                 && booking.getStart().isAfter(LocalDateTime.now()))
-                        .sorted(Comparator.comparing(Booking::getStart).reversed())
                         .collect(Collectors.toList());
                 break;
         }

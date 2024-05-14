@@ -1,15 +1,13 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.shareit.booking.dto.BookingInItemDto;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @SuperBuilder
 @NoArgsConstructor
 public class ItemResponseWithBookingAndCommentDto {

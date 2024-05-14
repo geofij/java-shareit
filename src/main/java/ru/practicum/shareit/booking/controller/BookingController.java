@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -10,10 +11,13 @@ import ru.practicum.shareit.exception.WrongStateException;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Validated
 @RequestMapping(path = "/bookings")
 public class BookingController {
     private final BookingService bookingService;
@@ -43,11 +47,10 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<BookingResponseDto> getCurrentUserBookingsByState(@RequestParam(name = "from", defaultValue = "0") int from,
-                                                                  @RequestParam(name = "size", defaultValue = "20") int size,
+    public List<BookingResponseDto> getCurrentUserBookingsByState(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero  int from,
+                                                                  @RequestParam(name = "size", defaultValue = "20") @Positive int size,
                                                                   @RequestParam(name = "state", defaultValue = "ALL") String state,
                                                        @RequestHeader("X-Sharer-User-Id") long userId) {
-        validateFromSizeParams(from, size);
         validateState(state);
         userService.isUserExist(userId);
 
@@ -55,11 +58,10 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingResponseDto> getBookingsByItemsOwner(@RequestParam(name = "from", defaultValue = "0") int from,
-                                                            @RequestParam(name = "size", defaultValue = "20") int size,
+    public List<BookingResponseDto> getBookingsByItemsOwner(@RequestParam(name = "from", defaultValue = "0")  @PositiveOrZero int from,
+                                                            @RequestParam(name = "size", defaultValue = "20") @Positive int size,
                                                             @RequestParam(name = "state", defaultValue = "ALL") String state,
                                                  @RequestHeader("X-Sharer-User-Id") long userId) {
-        validateFromSizeParams(from, size);
         validateState(state);
         userService.isUserExist(userId);
 
@@ -74,12 +76,6 @@ public class BookingController {
                 !state.equals("PAST") &&
                 !state.equals("FUTURE")) {
             throw new WrongStateException("Unknown state: UNSUPPORTED_STATUS");
-        }
-    }
-
-    private void validateFromSizeParams(int from, int size) {
-        if (from < 0 || size <= 0) {
-            throw new WrongStateException("Неверные значения параметров.");
         }
     }
 }
