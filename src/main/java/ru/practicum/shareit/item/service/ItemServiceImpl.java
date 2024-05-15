@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -10,28 +12,30 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.DataNotFoundException;
 import ru.practicum.shareit.exception.ItemNotBeBookedException;
-import ru.practicum.shareit.item.dto.CommentCreateDto;
-import ru.practicum.shareit.item.dto.CommentCreatedResponseDto;
-import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.dto.ItemResponseWithBookingAndCommentDto;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.storage.RequestRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Slf4j
 @Service
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -51,8 +55,22 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemResponseDto save(Item item) {
-        return ItemMapper.toItemInfoDto(itemRepository.save(item));
+    public ItemResponseDto save(ItemCreateDto item, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("Пользователь не найден."));
+
+        ItemResponseDto newItem;
+
+        if (item.getRequestId() != null) {
+            ItemRequest request = requestRepository.findById(item.getRequestId())
+                    .orElseThrow(() -> new DataNotFoundException("Запрос не найден."));
+
+            newItem = ItemMapper.toItemInfoDto(itemRepository.save(ItemMapper.toItem(item, user, request)));
+        } else {
+            newItem = ItemMapper.toItemInfoDto(itemRepository.save(ItemMapper.toItem(item, user)));
+        }
+
+        return newItem;
     }
 
 
@@ -63,15 +81,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
-    public void deleteById(Long id) {
-        itemRepository.deleteById(id);
-    }
-
-    @Override
     @Transactional(readOnly = true)
-    public List<ItemResponseWithBookingAndCommentDto> getAllOwnerItems(long ownerId) {
-        List<Item> itemsFromDb = itemRepository.findAllByOwnerIdOrderById(ownerId);
+    public List<ItemResponseWithBookingAndCommentDto> getAllOwnerItems(long ownerId, int from, int size) {
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC,"id"));
+
+        List<Item> itemsFromDb = itemRepository.findAllByOwnerId(ownerId, reqPage);
         List<ItemResponseWithBookingAndCommentDto> dtos = new ArrayList<>();
 
         List<Long> itemIds = itemsFromDb.stream()
@@ -93,14 +107,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ItemResponseDto> searchByText(String text) {
+    public List<ItemResponseDto> searchByText(String text, int from, int size) {
         if (text.isEmpty() || text.isBlank()) {
             return new ArrayList<>();
         }
 
-        return ItemMapper.mapItemInfoDto(itemRepository.searchByText(text).stream()
-                .filter(Item::getAvailable)
-                .collect(Collectors.toList()));
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.ASC,"id"));
+
+        return ItemMapper.mapItemInfoDto(itemRepository.searchByText(text, reqPage));
     }
 
     @Override
@@ -149,7 +163,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         if (item.getOwner().getId() != userId) {
-            return ItemMapper.toItemResponseDto(item, commentDtos);
+            return ItemMapper.toItemFullInfoDto(item, commentDtos);
         }
 
         List<Booking> lastBookings = bookingRepository.findLastBooking(item.getId(),
@@ -172,16 +186,13 @@ public class ItemServiceImpl implements ItemService {
             nextBooking = nextBookings.get(0);
         }
 
-        return ItemMapper.toItemResponseDto(item,
+        return ItemMapper.toItemFullInfoDto(item,
                 BookingMapper.toBookingInItemDto(lastBooking),
                 BookingMapper.toBookingInItemDto(nextBooking),
                 commentDtos);
     }
 
     private ItemResponseWithBookingAndCommentDto getItemWithBookingsAndComments(Item item, List<Booking> bookings, List<Comment> comments) {
-        log.info("BOOKINGS" + bookings);
-        log.info("COMMENTS" + comments);
-
         List<CommentCreatedResponseDto> commentsDto = comments.stream()
                 .filter(comment -> comment.getItem().getId().equals(item.getId()))
                 .map(CommentMapper::toCommentCreatedResponseDto)
@@ -218,7 +229,7 @@ public class ItemServiceImpl implements ItemService {
 
         nextBooking = nextBookingOpt.orElseGet(Booking::new);
 
-        return ItemMapper.toItemResponseDto(item,
+        return ItemMapper.toItemFullInfoDto(item,
                 BookingMapper.toBookingInItemDto(lastBooking),
                 BookingMapper.toBookingInItemDto(nextBooking),
                 commentsDto);

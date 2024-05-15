@@ -18,13 +18,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User getUserById(long id) {
-        return storage.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Пользователь не найден."));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public UserResponseDto getById(long id) {
         return UserMapper.toUserResponseDto(storage.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Пользователь не найден.")));

@@ -1,6 +1,9 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
@@ -17,7 +20,6 @@ import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,12 +65,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public void deleteById(long id) {
-        bookingRepository.deleteById(id);
-    }
-
-    @Override
-    @Transactional
     public BookingResponseDto approveBooking(boolean isApproved, long bookingId, long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new DataNotFoundException("Бронирование не найдено"));
@@ -93,8 +89,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingResponseDto> getUserBookingsByState(long userId, String state) {
-        List<Booking> allBookings = bookingRepository.findAllByBookerId(userId);
+    public List<BookingResponseDto> getUserBookingsByState(long userId, String state, int from, int size) {
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
+        List<Booking> allBookings = bookingRepository.findAllByBookerId(userId, reqPage);
 
         if (allBookings.isEmpty()) {
             return new ArrayList<>();
@@ -105,8 +102,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookingResponseDto> getBookingsByItemsOwner(long ownerId, String state) {
-        List<Booking> allBookings = bookingRepository.findAllByItemOwnerIdOrderById(ownerId);
+    public List<BookingResponseDto> getBookingsByItemsOwner(long ownerId, String state, int from, int size) {
+        Pageable reqPage = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "start"));
+        List<Booking> allBookings = bookingRepository.findAllByItemOwnerId(ownerId, reqPage);
 
         if (allBookings.isEmpty()) {
             return new ArrayList<>();
@@ -116,10 +114,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private List<BookingResponseDto> sortByDateAndFilterBookingsByState(List<Booking> bookingList, String state) {
-        bookingList = bookingList.stream()
-                .sorted(Comparator.comparing(Booking::getStart).reversed())
-                .collect(Collectors.toList());
-
         switch (state) {
             case ("WAITING"):
                 bookingList = bookingList.stream()

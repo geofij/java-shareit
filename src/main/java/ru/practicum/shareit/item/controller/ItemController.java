@@ -1,32 +1,29 @@
 package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.exception.AccessErrorException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Validated
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
-    private final UserService userService;
 
     @PostMapping
     public ItemResponseDto add(@Valid @RequestBody ItemCreateDto item, @RequestHeader("X-Sharer-User-Id") long ownerId) {
-        User owner = userService.getUserById(ownerId);
-
-        Item newItem = ItemMapper.toItem(item, owner);
-
-        return itemService.save(newItem);
+        return itemService.save(item, ownerId);
     }
 
     @PatchMapping("/{itemId}")
@@ -52,13 +49,18 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemResponseWithBookingAndCommentDto> getAll(@RequestHeader("X-Sharer-User-Id") long ownerId) {
-        return itemService.getAllOwnerItems(ownerId);
+    public List<ItemResponseWithBookingAndCommentDto> getAll(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                                             @RequestParam(name = "size", defaultValue = "20") @Positive int size,
+                                                             @RequestHeader("X-Sharer-User-Id") long ownerId) {
+        return itemService.getAllOwnerItems(ownerId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemResponseDto> search(@RequestParam("text") String text, @RequestHeader("X-Sharer-User-Id") long ownerId) {
-        return itemService.searchByText(text);
+    public List<ItemResponseDto> search(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero  int from,
+                                        @RequestParam(name = "size", defaultValue = "20") @Positive int size,
+                                        @RequestParam("text") String text,
+                                        @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.searchByText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

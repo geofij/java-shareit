@@ -1,10 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Getter
+@Data
 @SuperBuilder
 @NoArgsConstructor
 public class ItemResponseDto {
@@ -12,4 +12,5 @@ public class ItemResponseDto {
     private String name;
     private String description;
     private Boolean available;
+    private Long requestId;
 }
