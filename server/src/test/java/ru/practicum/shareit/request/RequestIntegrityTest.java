@@ -35,7 +35,7 @@ public class RequestIntegrityTest {
                 .description("request")
                 .build();
 
-        RequestResponseDto savedRequest = service.create(requestDto, 1L);
+        RequestResponseDto savedRequest = service.create(requestDto, saveUser.getId());
 
         TypedQuery<ItemRequest> query = em.createQuery(
                 "Select r from ItemRequest r where r.description = :description", ItemRequest.class);
