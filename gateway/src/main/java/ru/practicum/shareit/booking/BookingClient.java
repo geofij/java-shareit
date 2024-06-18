@@ -33,7 +33,7 @@ public class BookingClient extends BaseClient {
         return get("/" + bookingId, userId);
     }
 
-    public ResponseEntity<Object> getCurrentUserBookingsByState(long userId, String stateDirt, Integer from, Integer size) {
+    public ResponseEntity<Object> getCurrentUserBookingsByState(long userId, String stateDirt, int from, int size) {
         BookingState state = BookingState.from(stateDirt)
                 .orElseThrow(() -> new StateNotFoundException("Unknown state: " + stateDirt));
         Map<String, Object> parameters = Map.of(
@@ -44,7 +44,7 @@ public class BookingClient extends BaseClient {
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> getBookingsByItemsOwner(long userId, String stateDirt, Integer from, Integer size) {
+    public ResponseEntity<Object> getBookingsByItemsOwner(long userId, String stateDirt, int from, int size) {
         BookingState state = BookingState.from(stateDirt)
                 .orElseThrow(() -> new StateNotFoundException("Unknown state: " + stateDirt));
         Map<String, Object> parameters = Map.of(

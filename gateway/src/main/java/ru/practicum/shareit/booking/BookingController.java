@@ -25,8 +25,8 @@ public class BookingController {
     public ResponseEntity<Object> getCurrentUserBookingsByState(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @RequestParam(name = "state", defaultValue = "all") String state,
-            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+            @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         return bookingClient.getCurrentUserBookingsByState(userId, state, from, size);
     }
 
@@ -34,8 +34,8 @@ public class BookingController {
     public ResponseEntity<Object> getBookingsByItemsOwner(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @RequestParam(name = "state", defaultValue = "all") String state,
-            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+            @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         return bookingClient.getBookingsByItemsOwner(userId, state, from, size);
     }
 

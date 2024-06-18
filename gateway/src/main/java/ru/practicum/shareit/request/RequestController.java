@@ -36,8 +36,8 @@ public class RequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequests(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                 @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                 @RequestParam(defaultValue = "1") @Min(1) Integer size) {
+                                                 @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                 @RequestParam(defaultValue = "1") @Min(1) int size) {
         return requestClient.getRequests(userId, from, size);
     }
 }

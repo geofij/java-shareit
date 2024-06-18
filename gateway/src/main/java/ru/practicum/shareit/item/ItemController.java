@@ -8,6 +8,8 @@ import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemUpdDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -41,14 +43,19 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemClient.getItems(userId);
+    public ResponseEntity<Object> getAll(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                         @RequestParam(name = "size", defaultValue = "20") @Positive int size,
+                                         @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemClient.getAll(userId, from, size);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> search(@RequestParam String text) {
+    public ResponseEntity<Object> search(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                         @RequestParam(name = "size", defaultValue = "20") @Positive int size,
+                                         @RequestParam String text,
+                                         @RequestHeader("X-Sharer-User-Id") long ownerId) {
         if (text.isBlank()) return ResponseEntity.ok(List.of());
-        return itemClient.searchItems(text);
+        return itemClient.searchItems(text, ownerId, from, size);
     }
 
     @PostMapping("/{id}/comment")
