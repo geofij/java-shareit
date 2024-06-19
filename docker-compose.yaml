@@ -11,7 +11,6 @@ services:
       - server
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
-  #      - TZ=Europe/Moscow
 
   server:
     build:
@@ -28,17 +27,13 @@ services:
       - DB_PORT=5432
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-  #      - TZ=Europe/Moscow
 
   postgresql:
     image: postgres:13.7-alpine
     container_name: postgresql
-    #    volumes:
-    #      - /var/lib/postgresql/data/
     ports:
       - "6541:5432"
     environment:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-#      - TZ=Europe/Moscow

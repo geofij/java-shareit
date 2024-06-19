@@ -100,14 +100,6 @@ public class BookingControllerTest {
                 .end(LocalDateTime.now())
                 .itemId(1L)
                 .build();
-
-        mvc.perform(post("/bookings")
-                        .content(mapper.writeValueAsString(wrongBookingIn))
-                        .header("X-Sharer-User-Id", "1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -170,14 +162,6 @@ public class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
-        mvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", "1")
-                        .param("state", "notExistsParam")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -63,13 +63,6 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email", is(userIn.getEmail())));
 
         UserCreateDto userInWrongEmail = UserCreateDto.builder().name("user").email("").build();
-
-        mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userInWrongEmail))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @Test

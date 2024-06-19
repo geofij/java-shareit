@@ -16,4 +16,12 @@ public class ErrorHandler {
     public ErrorResponse handleBadArgumentException(final StateNotFoundException exc) {
         return new ErrorResponse(exc.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBookingStartEndValidationException(final BookingStartEndValidationException e) {
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
 }

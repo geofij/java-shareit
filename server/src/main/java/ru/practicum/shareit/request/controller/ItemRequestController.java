@@ -8,9 +8,6 @@ import ru.practicum.shareit.request.dto.RequestResponseDto;
 import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -22,7 +19,7 @@ public class ItemRequestController {
     private final UserService userService;
 
     @PostMapping
-    public RequestResponseDto create(@Valid @RequestBody RequestCreateDto requestDto,
+    public RequestResponseDto create(@RequestBody RequestCreateDto requestDto,
                                      @RequestHeader("X-Sharer-User-Id") long userId) {
         return service.create(requestDto, userId);
     }
@@ -35,8 +32,8 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<RequestResponseDto> getAllRequests(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
-                                                   @RequestParam(name = "size", defaultValue = "10") @Positive int size,
+    public List<RequestResponseDto> getAllRequests(@RequestParam(name = "from", defaultValue = "0") int from,
+                                                   @RequestParam(name = "size", defaultValue = "10") int size,
                                                    @RequestHeader("X-Sharer-User-Id") long userId) {
         userService.isUserExist(userId);
 
